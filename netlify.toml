@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Next.js on Netlify requires the @netlify/plugin-nextjs plugin
+# It is auto-installed when deploying a Next.js site on Netlify.
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
