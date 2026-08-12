@@ -6,7 +6,6 @@ import { AdminSidebar } from "./AdminSidebar";
 import { AdminTopbar } from "./AdminTopbar";
 import { Toast } from "./Toast";
 import { getCurrentUser } from "@/lib/services/authService";
-import { isSupabaseConfigured } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -22,17 +21,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   useEffect(() => {
     async function checkAuth() {
-      if (!isSupabaseConfigured) {
-        // If Supabase is not configured yet, allow viewing admin layout for demonstration
-        setLoading(false);
-        return;
-      }
-      const user = await getCurrentUser();
-      if (!user) {
-        router.push("/admin/login");
-      } else {
-        setLoading(false);
-      }
+      // No backend configured — allow viewing admin layout for demonstration
+      setLoading(false);
     }
     checkAuth();
   }, [router]);

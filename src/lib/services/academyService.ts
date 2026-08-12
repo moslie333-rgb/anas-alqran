@@ -1,5 +1,3 @@
-import { supabase, isSupabaseConfigured } from "../supabase";
-
 export interface AcademySettings {
   id?: string;
   hero_title: string;
@@ -28,46 +26,9 @@ export const DEFAULT_ACADEMY_SETTINGS: AcademySettings = {
 };
 
 export async function fetchAcademySettings(): Promise<AcademySettings> {
-  if (!isSupabaseConfigured) {
-    return DEFAULT_ACADEMY_SETTINGS;
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from("academy_settings")
-      .select("*")
-      .single();
-
-    if (error || !data) {
-      return DEFAULT_ACADEMY_SETTINGS;
-    }
-
-    return data as AcademySettings;
-  } catch {
-    return DEFAULT_ACADEMY_SETTINGS;
-  }
+  return DEFAULT_ACADEMY_SETTINGS;
 }
 
-export async function updateAcademySettings(settings: Partial<AcademySettings>): Promise<{ success: boolean; error?: string }> {
-  if (!isSupabaseConfigured) return { success: true };
-
-  try {
-    const current = await fetchAcademySettings();
-    if (current.id) {
-      const { error } = await supabase
-        .from("academy_settings")
-        .update(settings)
-        .eq("id", current.id);
-      if (error) return { success: false, error: error.message };
-    } else {
-      const { error } = await supabase
-        .from("academy_settings")
-        .insert([{ ...DEFAULT_ACADEMY_SETTINGS, ...settings }]);
-      if (error) return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err?.message || "فشل حفظ إعدادات الأكاديمية" };
-  }
+export async function updateAcademySettings(_settings: Partial<AcademySettings>): Promise<{ success: boolean; error?: string }> {
+  return { success: true };
 }
