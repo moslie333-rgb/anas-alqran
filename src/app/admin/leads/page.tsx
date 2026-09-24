@@ -19,7 +19,13 @@ export default function AdminLeadsPage() {
   };
 
   useEffect(() => {
-    loadLeads();
+    let ignore = false;
+    fetchTrialLeads().then((data) => {
+      if (!ignore) setLeads(data);
+    });
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const handleStatusChange = async (id: string, newStatus: string) => {

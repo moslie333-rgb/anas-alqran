@@ -26,7 +26,13 @@ export default function AdminFAQPage() {
   };
 
   useEffect(() => {
-    loadFAQs();
+    let ignore = false;
+    fetchFAQs().then((data) => {
+      if (!ignore) setFaqs(data);
+    });
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const openCreateModal = () => {

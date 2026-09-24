@@ -1,3 +1,5 @@
+import { supabase } from "@/lib/supabase";
+
 export interface FAQItem {
   id?: string;
   q: string;
@@ -29,17 +31,78 @@ export const DEFAULT_FAQS: FAQItem[] = [
 ];
 
 export async function fetchFAQs(): Promise<FAQItem[]> {
-  return DEFAULT_FAQS;
+  try {
+    const { data, error } = await supabase
+      .from("faqs")
+      .select("*")
+      .order("display_order", { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      if (error) console.warn("Supabase fetchFAQs warning:", error.message);
+      return DEFAULT_FAQS;
+    }
+
+    return data.map((item) => ({
+      id: item.id,
+      q: item.question || item.q || "",
+      a: item.answer || item.a || "",
+      display_order: item.display_order ?? undefined,
+    }));
+  } catch (err) {
+    console.error("fetchFAQs error:", err);
+    return DEFAULT_FAQS;
+  }
 }
 
-export async function createFAQ(_faq: { q: string; a: string; display_order?: number }): Promise<{ success: boolean; error?: string }> {
-  return { success: true };
+export async function createFAQ(faq: {
+  q: string;
+  a: string;
+  display_order?: number;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { error } = await supabase.from("faqs").insert({
+      question: faq.q,
+      answer: faq.a,
+      display_order: faq.display_order || 1,
+    });
+
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: errorMsg };
+  }
 }
 
-export async function updateFAQ(_id: string, _faq: { q: string; a: string; display_order?: number }): Promise<{ success: boolean; error?: string }> {
-  return { success: true };
+export async function updateFAQ(
+  id: string,
+  faq: { q: string; a: string; display_order?: number }
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { error } = await supabase
+      .from("faqs")
+      .update({
+        question: faq.q,
+        answer: faq.a,
+        display_order: faq.display_order,
+      })
+      .eq("id", id);
+
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: errorMsg };
+  }
 }
 
-export async function deleteFAQ(_id: string): Promise<{ success: boolean; error?: string }> {
-  return { success: true };
+export async function deleteFAQ(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { error } = await supabase.from("faqs").delete().eq("id", id);
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: errorMsg };
+  }
 }

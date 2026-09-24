@@ -21,7 +21,13 @@ export default function AdminMediaLibraryPage() {
   };
 
   useEffect(() => {
-    loadMedia();
+    let ignore = false;
+    fetchAllMedia().then((data) => {
+      if (!ignore) setMediaList(data);
+    });
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +37,7 @@ export default function AdminMediaLibraryPage() {
     const { url, error } = await uploadMediaFile(file);
     setUploading(false);
     if (url) {
-      setToast({ msg: "تم رفع الملف بنجاح إلى Supabase Storage!", type: "success" });
+      setToast({ msg: "تم رفع الملف بنجاح!", type: "success" });
       loadMedia();
     } else {
       setToast({ msg: error || "فشل رفع الملف", type: "error" });
@@ -63,7 +69,7 @@ export default function AdminMediaLibraryPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-extrabold text-white">مكتبة الوسائط (Media Library)</h1>
-            <p className="text-xs text-[#B8C3D9] mt-1">رفع وإدارة الصور والملفات المخزنة سحابياً في Supabase Storage</p>
+            <p className="text-xs text-[#B8C3D9] mt-1">رفع وإدارة الصور والملفات المخزنة سحابياً</p>
           </div>
 
           <label className="px-5 py-2.5 rounded-xl font-semibold text-xs text-white bg-gradient-to-r from-[#4A7DFF] to-[#6E5BFF] hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-white/15">
@@ -121,7 +127,7 @@ export default function AdminMediaLibraryPage() {
           ) : (
             <div className="col-span-full p-12 text-center glass-card rounded-3xl space-y-3">
               <FolderOpen className="w-10 h-10 text-[#7EC8FF] mx-auto opacity-50" />
-              <p className="text-xs text-[#B8C3D9]">لا توجد ملفات وسائط مرفوعة في Supabase Storage حتى الآن.</p>
+              <p className="text-xs text-[#B8C3D9]">لا توجد ملفات وسائط مرفوعة حتى الآن.</p>
             </div>
           )}
         </div>
@@ -129,7 +135,7 @@ export default function AdminMediaLibraryPage() {
         <ConfirmModal
           isOpen={Boolean(deleteTarget)}
           title="تأكيد حذف الملف"
-          message="هل أنت متأكد من حذف هذا الملف نهائياً من Supabase Storage؟"
+          message="هل أنت متأكد من حذف هذا الملف نهائياً؟"
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteTarget(null)}
         />

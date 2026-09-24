@@ -1,3 +1,5 @@
+import { supabase } from "@/lib/supabase";
+
 export interface ReviewItem {
   id?: string;
   src: string;
@@ -16,13 +18,59 @@ export const DEFAULT_REVIEWS: ReviewItem[] = [
 ];
 
 export async function fetchReviews(): Promise<ReviewItem[]> {
-  return DEFAULT_REVIEWS;
+  try {
+    const { data, error } = await supabase
+      .from("testimonials")
+      .select("*")
+      .order("display_order", { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      if (error) console.warn("Supabase fetchReviews warning:", error.message);
+      return DEFAULT_REVIEWS;
+    }
+
+    return data.map((item) => ({
+      id: item.id,
+      src: item.image_url || "/images/reviews/review-1.jpg",
+      alt: item.alt || "تقييم ولي أمر لأكاديمية أنس القرآن",
+      parent_name: item.parent_name || undefined,
+      display_order: item.display_order ?? undefined,
+    }));
+  } catch (err) {
+    console.error("fetchReviews error:", err);
+    return DEFAULT_REVIEWS;
+  }
 }
 
-export async function createReview(_review: { image_url: string; alt?: string; parent_name?: string; display_order?: number }): Promise<{ success: boolean; error?: string }> {
-  return { success: true };
+export async function createReview(review: {
+  image_url: string;
+  alt?: string;
+  parent_name?: string;
+  display_order?: number;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { error } = await supabase.from("testimonials").insert({
+      image_url: review.image_url,
+      alt: review.alt || "تقييم ولي أمر لأكاديمية أنس القرآن",
+      parent_name: review.parent_name || null,
+      display_order: review.display_order || 1,
+    });
+
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: errorMsg };
+  }
 }
 
-export async function deleteReview(_id: string): Promise<{ success: boolean; error?: string }> {
-  return { success: true };
+export async function deleteReview(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { error } = await supabase.from("testimonials").delete().eq("id", id);
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: errorMsg };
+  }
 }

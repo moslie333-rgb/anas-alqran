@@ -11,14 +11,8 @@ interface ShareButtonsProps {
 export function ShareButtons({ title, slug }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
-  const getShareUrl = () => {
-    if (typeof window !== "undefined") {
-      return `${window.location.origin}/articles/${slug}`;
-    }
-    return `https://anasquran.com/articles/${slug}`;
-  };
-
-  const shareUrl = getShareUrl();
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://anasquran.com").replace(/\/+$/, "");
+  const shareUrl = `${siteUrl}/articles/${slug}`;
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedTitle = encodeURIComponent(`مقال رائع من أنس القرآن: ${title}`);
 

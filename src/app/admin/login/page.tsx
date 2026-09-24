@@ -98,7 +98,7 @@ export default function AdminLoginPage() {
         </form>
 
         <p className="text-[11px] text-center text-[#7E8C9E]">
-          محمية عبر Supabase Authentication • أنس القرآن
+          لوحة تحكم محمية • أنس القرآن
         </p>
       </div>
     </main>

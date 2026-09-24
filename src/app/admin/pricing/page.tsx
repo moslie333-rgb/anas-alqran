@@ -31,7 +31,13 @@ export default function AdminPricingPage() {
   };
 
   useEffect(() => {
-    loadPackages();
+    let ignore = false;
+    fetchPricingPackages().then((data) => {
+      if (!ignore) setGroupedPackages(data);
+    });
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const openCreateModal = () => {

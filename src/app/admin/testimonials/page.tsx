@@ -29,7 +29,13 @@ export default function AdminTestimonialsPage() {
   };
 
   useEffect(() => {
-    loadReviews();
+    let ignore = false;
+    fetchReviews().then((data) => {
+      if (!ignore) setReviews(data);
+    });
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

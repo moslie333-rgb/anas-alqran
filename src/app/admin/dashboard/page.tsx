@@ -57,7 +57,7 @@ export default function AdminDashboardOverview() {
     { title: "إدارة الباقات والأسعار", desc: "تعديل أسعار الباقات الـ 30 و45 و60 دقيقة بالريال العماني", href: "/admin/pricing", icon: DollarSign },
     { title: "رفع التقييمات والصور", desc: "إضافة لقطات شاشة واتساب جديدة للمنتج", href: "/admin/testimonials", icon: MessageSquareQuote },
     { title: "إعدادات الأكاديمية والـ Hero", desc: "تعديل نصوص واجهة الموقع والإحصائيات وروابط التواصل", href: "/admin/settings", icon: Sparkles },
-    { title: "مكتبة الوسائط والصور", desc: "رفع الصور والمستندات إلى Supabase Storage", href: "/admin/media", icon: FolderOpen },
+    { title: "مكتبة الوسائط والصور", desc: "رفع وإدارة الصور والمستندات", href: "/admin/media", icon: FolderOpen },
   ];
 
   return (

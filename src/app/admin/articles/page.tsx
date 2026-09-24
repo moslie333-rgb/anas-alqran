@@ -47,7 +47,13 @@ export default function AdminArticlesPage() {
   };
 
   useEffect(() => {
-    loadArticles();
+    let ignore = false;
+    fetchAllArticles().then((data) => {
+      if (!ignore) setArticles(data);
+    });
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const openCreateModal = () => {
